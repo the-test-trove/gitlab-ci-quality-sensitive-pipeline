@@ -1,0 +1,5 @@
+hypothesis
+pytest
+tox
+
+-r requirements.txt

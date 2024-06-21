@@ -1,0 +1,73 @@
+# .gitlab-ci.yml
+
+.tox-image:
+  image:
+    name: quay.io/redhat-aqe/tox:python-3.10
+    # Entrypoint: /bin/sh
+    entrypoint:
+      - ""
+
+.runner-tags:
+  tags:
+    - shared
+
+stages:
+  - unit-testing
+  - format-style-check
+  - sast-analysis
+  - integration-e2e-testing
+
+unit-tests:
+  extends:
+    - .runner-tags
+    - .tox-image
+  stage: unit-testing
+  script:
+    - tox -e unittests
+  coverage: '/Total coverage: \d+\.\d+\%/'
+  artifacts:
+    name: "$CI_COMMIT_REF_NAME"
+    paths:
+      - coverage.xml
+
+black:
+  extends:
+    - .runner-tags
+    - .tox-image
+  stage: format-style-check
+  script:
+    - tox -e black
+
+flake8:
+  extends:
+    - .runner-tags
+    - .tox-image
+  stage: format-style-check
+  script:
+    - tox -e flake8
+
+mypy:
+  extends:
+    - .runner-tags
+    - .tox-image
+  stage: sast-analysis
+  script:
+    - tox -e mypy
+
+integration-test:
+  extends:
+    - .runner-tags
+    - .tox-image
+  stage: integration-e2e-testing
+  when: manual
+  script:
+    - tox -e int
+
+e2e-test:
+  extends:
+    - .runner-tags
+    - .tox-image
+  stage: integration-e2e-testing
+  when: manual
+  script:
+    - tox -e e2e

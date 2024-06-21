@@ -1,0 +1,14 @@
+*.pyc
+.coverage
+.cache
+.tox
+.mypy_cache
+.pytest_cache
+.idea
+.env
+.venv
+__pycache__
+.scannerwork
+coverage.xml
+.hypothesis
+.vscode
